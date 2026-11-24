@@ -1,0 +1,38 @@
+name: Build Sanctuaries (One-Shot Topology Materializer)
+
+on:
+  # 勝手には動かず、Actionsタブの「Run workflow」ボタンを押した時だけ1回実行される
+  workflow_dispatch:
+
+permissions:
+  contents: write  # 生成されたフォルダとファイルをリポジトリへ自動コミットする権限
+
+jobs:
+  materialize:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Run build_sanctuaries.py and verify main.py
+        run: |
+          python build_sanctuaries.py
+          python main.py
+
+      - name: Commit and push materialized sanctuaries
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add .
+          if git diff --staged --quiet; then
+            echo "No new files to commit."
+          else
+            git commit -m "chore: materialize sanctuaries and main.py from architecture.yml"
+            git push
+          fi
