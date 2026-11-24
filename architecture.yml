@@ -1,0 +1,28 @@
+system: "imagesProjector - Autonomous Art Pipeline"
+version: "1.0.0"
+timezone: "Asia/Tokyo"
+
+sanctuaries:
+  - name: "Chaos"
+    level: 0
+    role: "零点・揺らぎの感知（テキスト、時刻、外部シードの吸収）"
+    subdirs: ["seeds"]
+    next: "Entropy"
+
+  - name: "Entropy"
+    level: 1
+    role: "配管・整流と幾何学下絵（ワイヤーフレーム）の生成"
+    subdirs: ["wireframes"]
+    next: "Processor"
+
+  - name: "Processor"
+    level: 2
+    role: "心臓・ControlNet / 潜在空間（Slerp）による画像結晶化"
+    subdirs: []
+    next: "StrataCrystallization"
+
+  - name: "StrataCrystallization"
+    level: 3
+    role: "地層・作品画像とメタデータ（Markdown / Gallery）の永続アーカイブ"
+    subdirs: ["gallery"]
+    next: null
