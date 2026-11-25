@@ -1,4 +1,8 @@
-"""Auto-generated autonomous circulation entry point from architecture.yml."""
+"""
+imagesProjector - Autonomous Circulation & Strata Crystallization Entry Point
+4つの聖域（Chaos / Entropy / Processor / StrataCrystallization）を統合し、
+過去の地層からの種の発掘・整流・具現化・新たな地層の結晶化を1サイクル実行する。
+"""
 from datetime import datetime
 import importlib
 from pathlib import Path
@@ -6,7 +10,6 @@ import sys
 from typing import Any, Dict
 from zoneinfo import ZoneInfo
 
-# 4つの聖域から基底クラスをインポート
 from Chaos.base_chaos import BaseChaos
 from Entropy.base_entropy import BaseEntropy
 from Processor.base_processor import BaseProcessor
@@ -19,14 +22,14 @@ PROJECT_ROOT = Path(__file__).resolve().parent
 
 
 # ==========================================
-# 1. 各聖域の具象クラス（最小実装）
+# 1. 各聖域の具象クラス実装
 # ==========================================
 
 class QuantumChaos(BaseChaos):
     """【零点・感覚器】地層から発掘された過去の記憶、または原初の揺らぎを感知する"""
+
     def perceive(self, raw_input: Any) -> Dict[str, Any]:
         if isinstance(raw_input, dict) and "artifact" in raw_input:
-            # 過去の地層（JSON）から世代と本質を引き継ぐ
             prev_artifact = raw_input["artifact"]
             prev_gen = prev_artifact.get("generation", 0)
             prev_essence = prev_artifact.get("essence", "Zero-Point")
@@ -35,7 +38,6 @@ class QuantumChaos(BaseChaos):
                 "seed_essence": f"Evolved({prev_essence})",
                 "origin_source": raw_input.get("chronicle_file", "unknown_strata"),
             }
-        # 地層が空（初回起動）の場合の原初の火花
         return {
             "generation": 1,
             "seed_essence": "Primordial-Fluctuation",
@@ -45,13 +47,13 @@ class QuantumChaos(BaseChaos):
 
 class GeometricEntropy(BaseEntropy):
     """【神経・血流 / 破骨細胞】ノイズを溶かして隔離し、幾何学ワイヤーフレームへ整流する"""
+
     def dissolve_and_align(self, fluctuation: Dict[str, Any]) -> Dict[str, Any]:
         gen = fluctuation.get("generation", 1)
         essence = fluctuation.get("seed_essence", "").strip()
         if not essence:
             raise ValueError("Empty essence detected: dissolving into ErrorTrapper.")
 
-        # 世代ごとに変化する幾何学ワイヤーフレーム（三角形〜十角形の位相循環）
         vertices = (gen % 8) + 3
         return {
             "generation": gen,
@@ -63,12 +65,25 @@ class GeometricEntropy(BaseEntropy):
 
 
 class LightProcessor(BaseProcessor):
-    """【心臓・意志 / 骨芽細胞】幾何学ワイヤーフレームに光エネルギーを与え作品を具現化する"""
+    """【心臓・意志 / 骨芽細胞】幾何学ワイヤーフレームに光エネルギー・哲学・視覚プロンプトを定着させる"""
+
     def materialize(self, wireframe: Dict[str, Any]) -> Dict[str, Any]:
         gen = wireframe["generation"]
         geom = wireframe["geometry"]
         essence = wireframe["essence"]
         spectrum = "Okinawa-Azure-Gold" if gen % 2 == 1 else "Deep-Quantum-Indigo"
+
+        philosophy = (
+            f"Generation {gen} probes the boundary between discrete quantum jumps and continuous flow. "
+            f"Through the lens of {geom}, '{essence}' dissolves old rigidity and crystallizes "
+            f"into a transient yet enduring form—proving that stillness and circulation are one (Oneness)."
+        )
+
+        visual_prompt = (
+            f"Sacred geometric {geom} floating above a serene Okinawan horizon, "
+            f"illuminated by {spectrum} quantum light rays, translucent crystalline strata layers, "
+            f"minimalist ethereal fine art, high contrast, 8k resolution, --ar 16:9"
+        )
 
         return {
             "generation": gen,
@@ -77,21 +92,47 @@ class LightProcessor(BaseProcessor):
             "structure": geom,
             "light_spectrum": spectrum,
             "manifestation": f"Crystal Layer #{gen:04d} crystallized via {geom} ({spectrum})",
+            "philosophy": philosophy,
+            "visual_prompt": visual_prompt,
         }
 
 
 class ChronicleStrata(BaseStrata):
-    """【地層・骨格 / 無機質の結晶】具現化された作品を燃えない年代記（Markdown）として刻む"""
+    """【地層・骨格 / 無機質の結晶】作品メタデータ・哲学的考察・視覚プロンプトを年代記として刻む"""
+
     def format_fossil(self, artifact: Dict[str, Any], metadata: Dict[str, Any]) -> str:
+        gen = artifact.get("generation", 0)
+        deposited_at = metadata.get("deposited_at", "Unknown")
+        origin_source = artifact.get("origin_source", "Genesis-Zero-Point")
+        structure = artifact.get("structure", "Unknown")
+        spectrum = artifact.get("light_spectrum", "Unknown")
+        essence = artifact.get("essence", "")
+        manifestation = artifact.get("manifestation", "")
+        philosophy = artifact.get("philosophy", "No philosophical reflection recorded.")
+        visual_prompt = artifact.get("visual_prompt", "No visual prompt generated.")
+
         return (
-            f"# Strata Chronicle — Generation {artifact.get('generation')}\n\n"
-            f"- **Deposited At (JST)**: `{metadata.get('deposited_at')}`\n"
-            f"- **Inherited From**: `{artifact.get('origin_source')}`\n"
-            f"- **Geometry**: `{artifact.get('structure')}`\n"
-            f"- **Light Spectrum**: `{artifact.get('light_spectrum')}`\n"
-            f"- **Essence**: `{artifact.get('essence')}`\n\n"
-            f"## Manifestation\n"
-            f"> {artifact.get('manifestation')}\n"
+            f"---\n"
+            f"generation: {gen}\n"
+            f"deposited_at: \"{deposited_at}\"\n"
+            f"geometry: \"{structure}\"\n"
+            f"light_spectrum: \"{spectrum}\"\n"
+            f"---\n\n"
+            f"# Strata Chronicle — Generation {gen:04d}\n\n"
+            f"## 1. 位相メタデータ（Phase Metadata）\n"
+            f"- **Deposited At (JST)**: `{deposited_at}`\n"
+            f"- **Inherited From**: `{origin_source}`\n"
+            f"- **Geometry**: `{structure}`\n"
+            f"- **Light Spectrum**: `{spectrum}`\n"
+            f"- **Essence**: `{essence}`\n\n"
+            f"## 2. 具現化の記録（Manifestation）\n"
+            f"> {manifestation}\n\n"
+            f"## 3. 哲学的考察（Philosophical Reflection）\n"
+            f"{philosophy}\n\n"
+            f"## 4. 視覚プロンプト（Visual Projection Prompt）\n"
+            f"```text\n"
+            f"{visual_prompt}\n"
+            f"```\n"
         )
 
 
@@ -100,7 +141,7 @@ class ChronicleStrata(BaseStrata):
 # ==========================================
 
 def verify_topology() -> None:
-    """architecture.yml から生成された各聖域の __init__.py 経路を検証する"""
+    """各聖域の __init__.py 経路と循環接続を検証する"""
     now_str = datetime.now(ZoneInfo(TIMEZONE)).strftime("%Y.%m.%d.%H%M")
     print(f"=== {SYSTEM_NAME} ===")
     print(f"Timestamp ({TIMEZONE}): {now_str}")
@@ -139,7 +180,7 @@ def run_autonomous_cycle() -> int:
         return 1
     print(f"🕸️  [Entropy] Phase -> {entropy_packet['phase']} ({entropy_packet['wireframe']['geometry']})")
 
-    # Step 4: Processor（心臓・意志）— 光エネルギーの定着と具現化
+    # Step 4: Processor（心臓・意志）— 光エネルギー・哲学・視覚プロンプトの定着
     processor_packet = processor.pulse(entropy_packet)
     if processor_packet.get("phase") != "ready_for_strata":
         print(f"⚠️  [Processor] Skipped: {processor_packet.get('reason')}", file=sys.stderr)
