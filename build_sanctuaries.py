@@ -1,167 +1,163 @@
-from pathlib import Path
-import re
-
-
-INIT_TEMPLATE = '''"""Auto-generated topological anchor for {name}."""
-from pathlib import Path
-
-CURRENT_ROOT = Path(__file__).resolve().parent
-PROJECT_ROOT = CURRENT_ROOT.parent
-SANCTUARY_NAME = CURRENT_ROOT.name
-
-
-def _resolve_next_sanctuary() -> str | None:
-    arch_file = PROJECT_ROOT / "architecture.yml"
-    if not arch_file.exists():
-        return None
-    current_target = None
-    for raw_line in arch_file.read_text(encoding="utf-8").splitlines():
-        line = raw_line.strip()
-        if line.startswith("- name:"):
-            current_target = line.split(":", 1)[1].strip().strip('"\\'')
-        elif current_target == SANCTUARY_NAME and line.startswith("next:"):
-            val = line.split(":", 1)[1].strip().strip('"\\'')
-            return None if val in ("null", "None", "") else val
-    return None
-
-
-NEXT_SANCTUARY = _resolve_next_sanctuary()
-NEXT_ROOT = (PROJECT_ROOT / NEXT_SANCTUARY) if NEXT_SANCTUARY else CURRENT_ROOT
-'''
-
-
-MAIN_TEMPLATE = '''"""Auto-generated autonomous circulation entry point from architecture.yml."""
+"""
+imagesProjector - Sanctuary Builder & Topology Synchronizer
+architecture.yml を読み込み、以下の責務を安全に執行する:
+  1. 各聖域のディレクトリと __init__.py（位相接続トポロジ）を常に最新へ同期する
+  2. base_*.py および main.py は「未存在時のみ生成」かつ「マジックコメント保護」により上書きを完全に防止する
+"""
 from datetime import datetime
-import importlib
 from pathlib import Path
+import sys
+from typing import Any, Dict, List
 from zoneinfo import ZoneInfo
 
-SYSTEM_NAME = {system_name!r}
-TIMEZONE = {timezone!r}
-CASCADE_ORDER = {cascade_order!r}
+try:
+    import yaml
+except ImportError as exc:
+    print("❌ [Error] PyYAML is required. Install via `pip install pyyaml`.", file=sys.stderr)
+    raise SystemExit(1) from exc
+
 PROJECT_ROOT = Path(__file__).resolve().parent
+ARCH_FILE = PROJECT_ROOT / "architecture.yml"
+TIMEZONE = "Asia/Tokyo"
+
+# このマーカーが先頭にあるファイルのみ「自動生成された初期雛形」とみなす
+AUTO_GEN_MARKER = "# @auto-generated-stub: imagesProjector"
+
+DEFAULT_SANCTUARIES = [
+    "Chaos",
+    "Entropy",
+    "Processor",
+    "StrataCrystallization",
+]
 
 
-def verify_topology() -> None:
-    """architecture.yml から生成された各聖域の __init__.py 経路を検証する"""
-    print(f"=== {{SYSTEM_NAME}} ===")
-    print(f"Timestamp ({{TIMEZONE}}): {{datetime.now(ZoneInfo(TIMEZONE)).strftime('%Y.%m.%d.%H%M')}}")
-    print("-" * 52)
-    for name in CASCADE_ORDER:
-        mod = importlib.import_module(name)
-        print(f"  [Sanctuary] {{mod.SANCTUARY_NAME:<22}} -> next: {{mod.NEXT_SANCTUARY}}")
-    print("-" * 52)
+def load_architecture(arch_path: Path) -> Dict[str, Any]:
+    """architecture.yml を安全に読み込む"""
+    if not arch_path.exists():
+        print(f"⚠️  [Warning] {arch_path.name} not found. Using default 4-sanctuary topology.")
+        return {"sanctuaries": DEFAULT_SANCTUARIES}
+
+    raw_data = yaml.safe_load(arch_path.read_text(encoding="utf-8"))
+    return raw_data if isinstance(raw_data, dict) else {}
 
 
-def run_cycle() -> None:
-    """三位一体の循環サイクルを起動する（未実装時はトポロジ検証モードで動作）"""
-    verify_topology()
+def extract_sanctuary_names(arch_data: Dict[str, Any]) -> List[str]:
+    """
+    architecture.yml の多様な記述形式（list / dict / cascade_order）から
+    聖域名の順序リストを抽出する。
+    """
+    if isinstance(arch_data.get("cascade_order"), list):
+        return [str(x) for x in arch_data["cascade_order"]]
 
-    try:
-        from Processor.base_processor import BaseProcessor
-    except ImportError:
-        print("[Info] 基底クラスがまだ未配置のため、トポロジ接続テストのみ完了しました。")
-        print("       次は Chaos / Entropy / Processor の各基底クラスを実装してください。")
+    raw_sanctuaries = arch_data.get("sanctuaries")
+    if isinstance(raw_sanctuaries, list):
+        names = []
+        for item in raw_sanctuaries:
+            if isinstance(item, str):
+                names.append(item)
+            elif isinstance(item, dict) and "name" in item:
+                names.append(str(item["name"]))
+        if names:
+            return names
+    elif isinstance(raw_sanctuaries, dict) and raw_sanctuaries:
+        return [str(k) for k in raw_sanctuaries.keys()]
+
+    return DEFAULT_SANCTUARIES
+
+
+def base_filename_for(sanctuary_name: str) -> str:
+    """
+    聖域名に対応する基底クラスファイル名を解決する。
+    StrataCrystallization -> base_strata.py
+    その他 (Chaos, Entropy, Processor) -> base_<lower>.py
+    """
+    if sanctuary_name == "StrataCrystallization":
+        return "base_strata.py"
+    return f"base_{sanctuary_name.lower()}.py"
+
+
+def sync_topology_file(target_path: Path, content: str) -> None:
+    """
+    __init__.py などの「構造の器（トポロジ）」を最新状態へ同期する（内容に変化がある場合のみ書き込み）。
+    """
+    target_path.parent.mkdir(parents=True, exist_ok=True)
+    if target_path.exists() and target_path.read_text(encoding="utf-8") == content:
+        print(f"✨ [Topology Unchanged] {target_path.relative_to(PROJECT_ROOT)}")
         return
 
-    processor = BaseProcessor()
-    processor.orchestrate_cycle()
+    target_path.write_text(content, encoding="utf-8")
+    print(f"🔄 [Topology Synced]    {target_path.relative_to(PROJECT_ROOT)}")
 
 
-if __name__ == "__main__":
-    run_cycle()
-'''
+def write_protected_file(target_path: Path, stub_content: str) -> None:
+    """
+    main.py や base_*.py などの「生きた実装」を保護する。
+    - ファイルが存在しない場合のみ初期雛形を作成する。
+    - すでにファイルが存在する場合は（マーカーの有無を問わず）一切上書きしない。
+    """
+    target_path.parent.mkdir(parents=True, exist_ok=True)
+
+    if target_path.exists():
+        head = target_path.read_text(encoding="utf-8")[:120]
+        status = "Stub Preserved" if AUTO_GEN_MARKER in head else "Custom Code Locked"
+        print(f"🛡️  [{status}] {target_path.relative_to(PROJECT_ROOT)}")
+        return
+
+    full_stub = f"{AUTO_GEN_MARKER}\n{stub_content}"
+    target_path.write_text(full_stub, encoding="utf-8")
+    print(f"🌱 [Stub Created]       {target_path.relative_to(PROJECT_ROOT)}")
 
 
-def parse_architecture(arch_path: Path) -> dict:
-    """PyYAMLが無くても動作する最小限の architecture.yml パーサー"""
-    meta = {
-        "system": "imagesProjector",
-        "timezone": "Asia/Tokyo",
-        "sanctuaries": [],
-    }
-    current: dict | None = None
+def build_sanctuaries() -> int:
+    now_str = datetime.now(ZoneInfo(TIMEZONE)).strftime("%Y.%m.%d.%H%M")
+    print(f"=== build_sanctuaries.py ({now_str} {TIMEZONE}) ===")
 
-    for raw_line in arch_path.read_text(encoding="utf-8").splitlines():
-        line = raw_line.strip()
-        if not line or line.startswith("#"):
-            continue
-        if line.startswith("system:"):
-            meta["system"] = line.split(":", 1)[1].strip().strip("\"'")
-        elif line.startswith("timezone:"):
-            meta["timezone"] = line.split(":", 1)[1].strip().strip("\"'")
-        elif line.startswith("- name:"):
-            if current:
-                meta["sanctuaries"].append(current)
-            name = line.split(":", 1)[1].strip().strip("\"'")
-            current = {"name": name, "level": len(meta["sanctuaries"]), "subdirs": [], "next": None}
-        elif current is not None:
-            if line.startswith("level:"):
-                current["level"] = int(line.split(":", 1)[1].strip())
-            elif line.startswith("subdirs:"):
-                match = re.search(r"\[(.*?)\]", line)
-                if match and match.group(1).strip():
-                    current["subdirs"] = [
-                        s.strip().strip("\"'") for s in match.group(1).split(",") if s.strip()
-                    ]
-            elif line.startswith("next:"):
-                val = line.split(":", 1)[1].strip().strip("\"'")
-                current["next"] = None if val in ("null", "None", "") else val
+    arch_data = load_architecture(ARCH_FILE)
+    sanctuaries = extract_sanctuary_names(arch_data)
+    total = len(sanctuaries)
 
-    if current:
-        meta["sanctuaries"].append(current)
+    if total == 0:
+        print("❌ [Error] No sanctuaries defined.", file=sys.stderr)
+        return 1
 
-    meta["sanctuaries"].sort(key=lambda x: x["level"])
-    return meta
+    # 1. 各聖域のディレクトリ・__init__.py（同期）・base_*.py（保護）を構築
+    for idx, name in enumerate(sanctuaries):
+        next_name = sanctuaries[(idx + 1) % total]
+        sanctuary_dir = PROJECT_ROOT / name
 
-
-def build_sanctuaries() -> None:
-    root = Path(__file__).resolve().parent
-    arch_path = root / "architecture.yml"
-
-    if not arch_path.exists():
-        raise FileNotFoundError(f"設計図が見つかりません: {arch_path}")
-
-    arch = parse_architecture(arch_path)
-    sanctuaries = arch["sanctuaries"]
-    print(f"Building {len(sanctuaries)} sanctuaries from {arch_path.name}...")
-
-    for s in sanctuaries:
-        name = s["name"]
-        s_dir = root / name
-        s_dir.mkdir(parents=True, exist_ok=True)
-
-        init_file = s_dir / "__init__.py"
-        if not init_file.exists():
-            init_file.write_text(INIT_TEMPLATE.format(name=name), encoding="utf-8")
-            print(f"  [+] Created: {name}/__init__.py")
-        else:
-            print(f"  [=] Exists : {name}/__init__.py")
-
-        for sub in s.get("subdirs", []):
-            sub_dir = s_dir / sub
-            sub_dir.mkdir(parents=True, exist_ok=True)
-            gitkeep = sub_dir / ".gitkeep"
-            if not gitkeep.exists():
-                gitkeep.touch()
-                print(f"  [+] Created: {name}/{sub}/.gitkeep")
-
-    # main.py の自動生成（未作成の場合のみ書き込み）
-    main_file = root / "main.py"
-    if not main_file.exists():
-        cascade_order = [s["name"] for s in sanctuaries]
-        main_code = MAIN_TEMPLATE.format(
-            system_name=arch["system"],
-            timezone=arch["timezone"],
-            cascade_order=cascade_order,
+        # (A) __init__.py は architecture.yml と常に同期
+        init_content = (
+            f'"""Auto-generated sanctuary topology from architecture.yml."""\n'
+            f'SANCTUARY_NAME = "{name}"\n'
+            f'SANCTUARY_INDEX = {idx}\n'
+            f'NEXT_SANCTUARY = "{next_name}"\n'
+            f'__all__ = ["SANCTUARY_NAME", "SANCTUARY_INDEX", "NEXT_SANCTUARY"]\n'
         )
-        main_file.write_text(main_code, encoding="utf-8")
-        print("  [+] Created: main.py")
-    else:
-        print("  [=] Exists : main.py")
+        sync_topology_file(sanctuary_dir / "__init__.py", init_content)
 
-    print("Done. Topological structure and main.py are ready.")
+        # (B) base_*.py は既存ファイルを上書きしない
+        base_file = sanctuary_dir / base_filename_for(name)
+        base_stub = (
+            f'"""Base class definition for {name} sanctuary."""\n'
+            f"# TODO: Implement Base{name} here. This file is protected from overwriting.\n"
+        )
+        write_protected_file(base_file, base_stub)
+
+    # 2. 第4の零点 main.py も既存ファイルを上書きしない
+    main_stub = (
+        '"""Entry point for imagesProjector autonomous circulation."""\n'
+        "import importlib\n\n"
+        f"CASCADE_ORDER = {sanctuaries!r}\n\n"
+        "if __name__ == '__main__':\n"
+        "    for s in CASCADE_ORDER:\n"
+        "        mod = importlib.import_module(s)\n"
+        "        print(f'[Sanctuary] {mod.SANCTUARY_NAME} -> next: {mod.NEXT_SANCTUARY}')\n"
+    )
+    write_protected_file(PROJECT_ROOT / "main.py", main_stub)
+
+    print("✅ Build & protection check complete.")
+    return 0
 
 
 if __name__ == "__main__":
-    build_sanctuaries()
+    sys.exit(build_sanctuaries())
