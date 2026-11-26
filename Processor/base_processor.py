@@ -4,36 +4,45 @@ from typing import Any, Dict
 
 JST = timezone(timedelta(hours=9))
 
+
 class BaseProcessor(ABC):
-    """
-    【心臓・意志】
-    潜在空間と光エネルギーを調律し、幾何学と色彩を作品へ具現化する基底クラス（骨芽細胞の役割）。
-    """
-    def __init__(self, sanctuary_name: str = "Processor"):
+    """[Level 2: 心臓・骨芽細胞] 整流されたワイヤーフレームに光・色彩・演出を定着させ、結晶化パケットへ昇華する基底クラス"""
+
+    def __init__(self, sanctuary_name: str = "Processor") -> None:
         self.sanctuary_name = sanctuary_name
 
     @abstractmethod
     def materialize(self, wireframe: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        骨芽細胞のように新たな構造・色彩・光エネルギーを定着させ、作品を具現化する。
-        """
-        pass
+        """Entropyからのワイヤーフレーム（カスケード構造等）を受け取り、具現化された成果物（artifact）を生成する"""
+        raise NotImplementedError
 
     def pulse(self, entropy_packet: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        心臓の鼓動として具現化を執行し、第4の聖域（StrataCrystallization）へ沈殿させる結晶データを返す。
-        """
-        if entropy_packet.get("phase") != "wireframe":
+        """Entropyからのパケットを受け取り、骨芽細胞による定着を経て StrataCrystallization へ送出する"""
+        phase = entropy_packet.get("phase")
+
+        if phase == "quarantined":
             return {
                 "origin": self.sanctuary_name,
                 "phase": "skipped_by_metabolism",
-                "reason": "Unaligned or quarantined packet",
+                "pulsed_at": datetime.now(JST).isoformat(),
+                "reason": "Upstream packet was quarantined by ErrorTrapper",
+                "quarantine_report": entropy_packet.get("report"),
             }
 
-        artifact = self.materialize(entropy_packet.get("wireframe", {}))
+        if phase != "aligned":
+            return {
+                "origin": self.sanctuary_name,
+                "phase": "rejected_by_processor",
+                "pulsed_at": datetime.now(JST).isoformat(),
+                "reason": f"Unsupported upstream phase: {phase}",
+            }
+
+        wireframe = entropy_packet.get("wireframe", {})
+        artifact = self.materialize(wireframe)
+
         return {
             "origin": self.sanctuary_name,
-            "crystallized_at": datetime.now(JST).isoformat(),
             "phase": "ready_for_strata",
+            "crystallized_at": datetime.now(JST).isoformat(),
             "artifact": artifact,
         }
