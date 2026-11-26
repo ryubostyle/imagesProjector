@@ -1,7 +1,6 @@
 name: Build Sanctuaries & Crystallize Dialogue
 
 on:
-  # 勝手には動かず、GitHubのActionsタブから「Run workflow」ボタンを押した時だけ実行される
   workflow_dispatch:
     inputs:
       seed_file:
@@ -11,7 +10,7 @@ on:
         type: string
 
 permissions:
-  contents: write  # 同期された聖域や生成されたYAML地層をリポジトリへ自動コミットする権限
+  contents: write
 
 jobs:
   materialize:
