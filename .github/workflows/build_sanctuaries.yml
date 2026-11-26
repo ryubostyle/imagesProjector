@@ -1,11 +1,17 @@
-name: Build Sanctuaries (One-Shot Topology Materializer)
+name: Build Sanctuaries & Crystallize Dialogue
 
 on:
-  # 勝手には動かず、Actionsタブの「Run workflow」ボタンを押した時だけ1回実行される
+  # 勝手には動かず、GitHubのActionsタブから「Run workflow」ボタンを押した時だけ実行される
   workflow_dispatch:
+    inputs:
+      seed_file:
+        description: "テスト投入する対話ドラフトのパス（空欄なら自動探索・地層継承）"
+        required: false
+        default: ""
+        type: string
 
 permissions:
-  contents: write  # 生成されたフォルダとファイルをリポジトリへ自動コミットする権限
+  contents: write  # 同期された聖域や生成されたYAML地層をリポジトリへ自動コミットする権限
 
 jobs:
   materialize:
@@ -20,12 +26,21 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Run build_sanctuaries.py and verify main.py
+      - name: Install dependencies (PyYAML)
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyyaml
+
+      - name: Build Sanctuaries & Run Autonomous Cycle
         run: |
           python build_sanctuaries.py
-          python main.py
+          if [ -n "${{ github.event.inputs.seed_file }}" ]; then
+            python main.py "${{ github.event.inputs.seed_file }}"
+          else
+            python main.py
+          fi
 
-      - name: Commit and push materialized sanctuaries
+      - name: Commit and push crystallized strata
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
@@ -33,6 +48,6 @@ jobs:
           if git diff --staged --quiet; then
             echo "No new files to commit."
           else
-            git commit -m "chore: materialize sanctuaries and main.py from architecture.yml"
+            git commit -m "chore: materialize sanctuaries and crystallize strata YAML"
             git push
           fi
