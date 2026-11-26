@@ -1,105 +1,101 @@
 from abc import ABC, abstractmethod
 from datetime import datetime, timezone, timedelta
+import json
 from pathlib import Path
 from typing import Any, Dict, Optional
-import json
+import yaml
 
 JST = timezone(timedelta(hours=9))
 
+
 class BaseStrata(ABC):
-    """
-    【地層・骨格】
-    Processorから届いた結晶の種（ready_for_strata）を受け取り、
-    時の経過にも風化しない永続的な記録と作品地層を刻む基底クラス。
-    """
+    """[Level 3: 地層・骨格] 結晶化したアートと年代記を永続化し、次期シードを発掘する基底クラス"""
+
     def __init__(
         self,
         sanctuary_name: str = "StrataCrystallization",
-        strata_dir: str = "StrataCrystallization/layers"
-    ):
+        strata_dir: str = "StrataCrystallization/layers",
+    ) -> None:
         self.sanctuary_name = sanctuary_name
         self.strata_dir = Path(strata_dir)
+        self._ensure_bedrock()
 
     def _ensure_bedrock(self) -> None:
-        """
-        地層を刻むための基盤ディレクトリ（岩盤）が存在することを保証する。
-        """
+        """地層ディレクトリが存在しない場合は基盤を作成する"""
         self.strata_dir.mkdir(parents=True, exist_ok=True)
 
-    def _generate_chronicle_name(self, prefix: str = "Strata", ext: str = "md") -> str:
-        """
-        JST（Asia/Tokyo）のタイムスタンプに基づくドット区切りの地層ファイル名を生成する。
-        例: Strata.2026.11.25.141800.md
-        """
-        now = datetime.now(JST)
-        stamp = now.strftime("%Y.%m.%d.%H%M%S")
-        return f"{prefix}.{stamp}.{ext}"
+    def _generate_chronicle_name(self, ext: str) -> str:
+        """JSTタイムスタンプに基づく地層ファイル名を生成する (例: Strata.2026.11.26.110000.yml)"""
+        now_jst = datetime.now(JST)
+        return f"Strata.{now_jst.strftime('%Y.%m.%d.%H%M%S')}.{ext}"
 
     @abstractmethod
-    def format_fossil(self, artifact: Dict[str, Any], metadata: Dict[str, Any]) -> str:
-        """
-        具現化された作品とメタデータを、永続的な地層テキスト（Markdown等）へ整形する。
-        """
-        pass
+    def format_fossil(self, artifact: Dict[str, Any]) -> str:
+        """成果物（artifact）を人間が読める年代記Markdown文字列へ整形する"""
+        raise NotImplementedError
 
-    def crystallize(self, processor_packet: Dict[str, Any], prefix: str = "Strata") -> Dict[str, Any]:
-        """
-        Processorからのパケットを検証し、無機質の地層ファイルとして沈殿・定着させる。
-        """
+    def crystallize(self, processor_packet: Dict[str, Any]) -> Dict[str, Any]:
+        """Processorからの結晶化パケットを受け取り、Markdown年代記とYAMLシードをペアで沈殿させる"""
         if processor_packet.get("phase") != "ready_for_strata":
             return {
                 "origin": self.sanctuary_name,
-                "phase": "unsettled",
-                "reason": f"Invalid phase: {processor_packet.get('phase')}",
+                "phase": "rejected_by_strata",
+                "reason": "Packet is not ready for crystallization",
             }
 
-        self._ensure_bedrock()
-
-        now_iso = datetime.now(JST).isoformat()
         artifact = processor_packet.get("artifact", {})
-        metadata = {
-            "sanctuary": self.sanctuary_name,
-            "crystallized_at": processor_packet.get("crystallized_at", now_iso),
-            "deposited_at": now_iso,
-        }
+        md_filename = self._generate_chronicle_name("md")
+        yml_filename = self._generate_chronicle_name("yml")
 
-        # 1. 記録・物語としての地層（Markdown）を刻む
-        md_filename = self._generate_chronicle_name(prefix=prefix, ext="md")
         md_path = self.strata_dir / md_filename
-        fossil_content = self.format_fossil(artifact, metadata)
-        md_path.write_text(fossil_content, encoding="utf-8")
+        yml_path = self.strata_dir / yml_filename
 
-        # 2. 次なる循環（Chaos）が再利用できる構造化データ（JSON）も同時に沈殿させる
-        json_filename = md_filename.replace(".md", ".json")
-        json_path = self.strata_dir / json_filename
+        # 1. 人間用年代記（Markdown）の保存
+        fossil_md = self.format_fossil(artifact)
+        md_path.write_text(fossil_md, encoding="utf-8")
+
+        # 2. 次期循環用シード（YAML）の保存
         strata_record = {
-            "metadata": metadata,
-            "artifact": artifact,
+            "metadata": {
+                "sanctuary": self.sanctuary_name,
+                "crystallized_at": processor_packet.get(
+                    "crystallized_at", datetime.now(JST).isoformat()
+                ),
+            },
             "chronicle_file": md_filename,
+            "artifact": artifact,
         }
-        json_path.write_text(
-            json.dumps(strata_record, ensure_ascii=False, indent=2),
-            encoding="utf-8"
-        )
+
+        with yml_path.open("w", encoding="utf-8") as f:
+            yaml.safe_dump(
+                strata_record,
+                f,
+                allow_unicode=True,
+                sort_keys=False,
+            )
 
         return {
             "origin": self.sanctuary_name,
             "phase": "crystallized",
-            "chronicle_path": str(md_path),
-            "seed_path": str(json_path),
-            "deposited_at": now_iso,
+            "chronicle_file": str(md_path),
+            "seed_file": str(yml_path),
         }
 
     def excavate_latest_seed(self) -> Optional[Dict[str, Any]]:
-        """
-        最新の地層から結晶データを発掘し、次なる Chaos（零点）の新たな種として還元する。
-        """
+        """最新の地層ファイル（.yml / .yaml / 互換用 .json）を発掘して次サイクルへ渡す"""
         if not self.strata_dir.exists():
             return None
 
-        json_files = sorted(self.strata_dir.glob("*.json"))
-        if not json_files:
+        strata_files = sorted(
+            list(self.strata_dir.glob("Strata.*.yml"))
+            + list(self.strata_dir.glob("Strata.*.yaml"))
+            + list(self.strata_dir.glob("Strata.*.json"))
+        )
+        if not strata_files:
             return None
 
-        latest_file = json_files[-1]
-        return json.loads(latest_file.read_text(encoding="utf-8"))
+        latest_file = strata_files[-1]
+        text = latest_file.read_text(encoding="utf-8")
+        if latest_file.suffix.lower() in {".yml", ".yaml"}:
+            return yaml.safe_load(text) or {}
+        return json.loads(text)
