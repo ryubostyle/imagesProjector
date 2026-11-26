@@ -1,56 +1,62 @@
 from abc import ABC, abstractmethod
+from datetime import datetime, timezone, timedelta
+from pathlib import Path
 from typing import Any, Dict, Tuple
 
-class ErrorTrapper:
-    """
-    異常・偏り・ノイズを隔離し、システム全体の崩壊を防ぐ浄化装置（破骨細胞の役割）。
-    """
-    def __init__(self):
-        self.quarantined: list[Dict[str, Any]] = []
+JST = timezone(timedelta(hours=9))
 
-    def trap(self, source: str, error: Exception, raw_data: Any) -> Dict[str, Any]:
-        record = {
-            "source": source,
-            "error_type": type(error).__name__,
-            "message": str(error),
-            "dissolved_data": repr(raw_data),
+
+class ErrorTrapper:
+    """[破骨細胞] 揺らぎの中に混入したノイズ・不純物を検知し、安全な隔離パケットへ変換する"""
+
+    def __init__(self, sanctuary_name: str = "Entropy") -> None:
+        self.sanctuary_name = sanctuary_name
+
+    def isolate(self, error: Exception, raw_packet: Dict[str, Any]) -> Dict[str, Any]:
+        return {
+            "origin": self.sanctuary_name,
+            "phase": "quarantined",
+            "quarantined_at": datetime.now(JST).isoformat(),
+            "report": {
+                "error_type": type(error).__name__,
+                "message": str(error),
+                "source_origin": raw_packet.get("origin", "Unknown"),
+            },
         }
-        self.quarantined.append(record)
-        return record
 
 
 class BaseEntropy(ABC):
-    """
-    【神経・血流】
-    Chaosの揺らぎを受け取り、ノイズを溶かして幾何学ワイヤーフレームへ整流する基底クラス。
-    """
-    def __init__(self, sanctuary_name: str = "Entropy"):
+    """[Level 1: 神経・整流器] 混沌からの揺らぎを浄化し、カスケード構造（ワイヤーフレーム）へと整流する基底クラス"""
+
+    def __init__(
+        self,
+        sanctuary_name: str = "Entropy",
+        wireframes_dir: str = "Entropy/wireframes",
+    ) -> None:
         self.sanctuary_name = sanctuary_name
-        self.trapper = ErrorTrapper()
+        self.wireframes_dir = Path(wireframes_dir)
+        self.trapper = ErrorTrapper(sanctuary_name=sanctuary_name)
+        self._ensure_wireframes_sanctuary()
+
+    def _ensure_wireframes_sanctuary(self) -> None:
+        """整流された骨格データを格納する wireframes ディレクトリを保証する"""
+        self.wireframes_dir.mkdir(parents=True, exist_ok=True)
 
     @abstractmethod
     def dissolve_and_align(self, fluctuation: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        破骨細胞のように不要なノイズを溶かし、幾何学的な秩序（ワイヤーフレーム）へ整える。
-        """
-        pass
+        """混沌からのペイロードを浄化し、秩序ある構造（ワイヤーフレーム）へ変換する"""
+        raise NotImplementedError
 
     def circulate(self, chaos_packet: Dict[str, Any]) -> Tuple[bool, Dict[str, Any]]:
-        """
-        整流を実行する。異常が検知された場合はErrorTrapperで隔離し、循環の健全性を保つ。
-        """
+        """Chaosからのパケットを受け取り、破骨細胞による検査を経て整流パケットまたは隔離パケットを返す"""
+        fluctuation = chaos_packet.get("payload", {})
         try:
-            wireframe = self.dissolve_and_align(chaos_packet.get("payload", {}))
+            wireframe = self.dissolve_and_align(fluctuation)
             return True, {
                 "origin": self.sanctuary_name,
-                "phase": "wireframe",
+                "phase": "aligned",
+                "aligned_at": datetime.now(JST).isoformat(),
                 "wireframe": wireframe,
-                "trapped_count": len(self.trapper.quarantined),
             }
         except Exception as e:
-            trapped = self.trapper.trap(self.sanctuary_name, e, chaos_packet)
-            return False, {
-                "origin": self.sanctuary_name,
-                "phase": "quarantined",
-                "report": trapped,
-            }
+            return False, self.trapper.isolate(e, chaos_packet)
