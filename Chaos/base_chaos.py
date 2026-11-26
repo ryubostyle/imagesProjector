@@ -1,33 +1,38 @@
 from abc import ABC, abstractmethod
 from datetime import datetime, timezone, timedelta
+from pathlib import Path
 from typing import Any, Dict
 
 JST = timezone(timedelta(hours=9))
 
+
 class BaseChaos(ABC):
-    """
-    【零点・感覚器】
-    外界の未整流な気配やテキストを吸収し、最初の揺らぎ（Seed）を感知する基底クラス。
-    """
-    def __init__(self, sanctuary_name: str = "Chaos"):
+    """[Level 0: 零点・感覚器] 対話ドラフトや外界の微細な揺らぎを感知し、未整流パケットとして放出する基底クラス"""
+
+    def __init__(
+        self,
+        sanctuary_name: str = "Chaos",
+        seeds_dir: str = "Chaos/seeds",
+    ) -> None:
         self.sanctuary_name = sanctuary_name
-        self.born_at = datetime.now(JST).isoformat()
+        self.seeds_dir = Path(seeds_dir)
+        self._ensure_seeds_sanctuary()
+
+    def _ensure_seeds_sanctuary(self) -> None:
+        """外部シードや対話ドラフトを受け入れる seeds ディレクトリを保証する"""
+        self.seeds_dir.mkdir(parents=True, exist_ok=True)
 
     @abstractmethod
     def perceive(self, raw_input: Any) -> Dict[str, Any]:
-        """
-        外界からの入力を感覚器として受け取り、未整流の揺らぎデータへ変換する。
-        """
-        pass
+        """外界の入力（ファイルパス・辞書・テキスト・None）を感知し、揺らぎのペイロードへ変換する"""
+        raise NotImplementedError
 
-    def emit_fluctuation(self, raw_input: Any) -> Dict[str, Any]:
-        """
-        感知した揺らぎに零点の位相メタデータを付与し、次の聖域（Entropy）へ託す。
-        """
-        fluctuation = self.perceive(raw_input)
+    def emit_fluctuation(self, raw_input: Any = None) -> Dict[str, Any]:
+        """感知した揺らぎを標準パケットへ包み、次の聖域（Entropy）へ送出する"""
+        payload = self.perceive(raw_input)
         return {
             "origin": self.sanctuary_name,
-            "timestamp": datetime.now(JST).isoformat(),
-            "phase": "fluctuation",
-            "payload": fluctuation,
+            "phase": "fluctuation_emitted",
+            "emitted_at": datetime.now(JST).isoformat(),
+            "payload": payload,
         }
