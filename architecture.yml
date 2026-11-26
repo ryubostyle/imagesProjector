@@ -1,28 +1,34 @@
-system: "imagesProjector - Autonomous Art Pipeline"
-version: "1.0.0"
-timezone: "Asia/Tokyo"
+system:
+  name: "imagesProjector"
+  philosophy: "Oriented-Philosophia (試行的思考哲学)"
+  motto: "混沌の揺らぎから、燃えない結晶（地層）へ。"
+  cycle_mode: "autonomous_ring"
 
 sanctuaries:
   - name: "Chaos"
-    level: 0
-    role: "零点・揺らぎの感知（テキスト、時刻、外部シードの吸収）"
-    subdirs: ["seeds"]
-    next: "Entropy"
+    index: 0
+    role: "零点・感覚器：対話ドラフトや外界の揺らぎを吸収し、お題を感知する"
+    base_module: "Chaos/base_chaos.py"
+    subdirs:
+      - "seeds"
 
   - name: "Entropy"
-    level: 1
-    role: "配管・整流と幾何学下絵（ワイヤーフレーム）の生成"
-    subdirs: ["wireframes"]
-    next: "Processor"
+    index: 1
+    role: "神経・破骨細胞：不純物（ノイズ）を隔離し、お題＞章＞節＞文へとカスケード整流する"
+    base_module: "Entropy/base_entropy.py"
+    subdirs:
+      - "wireframes"
 
   - name: "Processor"
-    level: 2
-    role: "心臓・ControlNet / 潜在空間（Slerp）による画像結晶化"
+    index: 2
+    role: "心臓・骨芽細胞：カスケード構造を工程別パイプへ分割し、演出・音声・映像プロンプトを定着させる"
+    base_module: "Processor/base_processor.py"
     subdirs: []
-    next: "StrataCrystallization"
 
   - name: "StrataCrystallization"
-    level: 3
-    role: "地層・作品画像とメタデータ（Markdown / Gallery）の永続アーカイブ"
-    subdirs: ["gallery"]
-    next: null
+    index: 3
+    role: "地層・骨格：結晶化したシナリオを年代記(.md)と設計図(.yml)として永続化し、次サイクルへ還元する"
+    base_module: "StrataCrystallization/base_strata.py"
+    subdirs:
+      - "layers"
+      - "gallery"
