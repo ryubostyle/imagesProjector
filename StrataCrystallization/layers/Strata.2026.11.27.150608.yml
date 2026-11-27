@@ -1,0 +1,182 @@
+metadata:
+  sanctuary: StrataCrystallization
+  crystallized_at: '2026-11-27T15:06:08.673650+09:00'
+chronicle_file: Strata.2026.11.27.150608.md
+artifact:
+  generation: 1
+  theme: 映画企画：細目の理（ことわり）――対話から紡がれる一本の糸
+  structure: 4-gon_wireframe
+  light_spectrum: Okinawa-Azure-Gold
+  total_pipes: 4
+  cascade_tree:
+    theme: 映画企画：細目の理（ことわり）――対話から紡がれる一本の糸
+    chapters:
+    - chapter_title: 第一章：起 ―― 零点の出会い
+      sections:
+      - section_title: 混沌の懐と対話の核
+        sentences:
+        - speaker: 琉坊さとし
+          text: Chaosの懐に投げ込まれた対話の断片を、まずは一つの塊として丸めてみよう。
+        - speaker: 琉坊さとし
+          text: 粗目のままでは見えなかった文脈も、一度立体として受け取ることで輪郭が立ち上がる。
+        - speaker: Gemini嬢
+          text: はい。
+        - speaker: Gemini嬢
+          text: 波打ち際の揺らぎも、お題という核を中心に丸めることで受け止めやすくなります。
+        - speaker: Gemini嬢
+          text: 次の聖域へ渡す前に、まずは全体の温度感を整えていきましょう。
+    - chapter_title: 第二章：承 ―― 破骨細胞の予感
+      sections:
+      - section_title: 結晶内部のノイズと再構築
+        sentences:
+        - speaker: 語り手
+          text: 生地の奥には、まだ整っていないノイズや余白が潜んでいる。
+        - speaker: 語り手
+          text: 壊すために壊すのではない。
+        - speaker: 語り手
+          text: 古い形をほどくことで、まだ見ぬ秩序の居場所をつくる。
+        - speaker: Gemini嬢
+          text: 余白は欠落ではありません。
+        - speaker: Gemini嬢
+          text: 次の構造が生まれるために、まだ形を持たない可能性なのです。
+    - chapter_title: 第三章：転 ―― カスケードとパイプの錬成
+      sections:
+      - section_title: 四角形の展開と三本のパイプ
+        sentences:
+        - speaker: 琉坊さとし
+          text: 立体として受け止めたものを、今度は広げる。
+        - speaker: 琉坊さとし
+          text: 見えなかった階層が、ここで姿を現す。
+        - speaker: 琉坊さとし
+          text: Entropyでお題・章・節・文へとカスケード化し、思考の階層を一つずつ見える形にしていく。
+        - speaker: Gemini嬢
+          text: 三本のパイプは、それぞれ異なる役割を担いながら、一つの物語を紡いでいくのですね。
+    - chapter_title: 第四章：結 ―― 一本の糸、次世代への継承
+      sections:
+      - section_title: 結晶化から宇宙の種へ
+        sentences:
+        - speaker: Gemini嬢
+          text: そして最後はStrataCrystallizationで、燃えないYAMLの結晶として地層に刻まれます。
+        - speaker: 語り手
+          text: 無数の対話は、やがて一本の糸となる。
+        - speaker: 語り手
+          text: 記録は終わりではなく、未来へ続く物語の始まりなのだ。
+        - speaker: 語り手
+          text: Gemini嬢：次の世代の種へとつながる循環が、ここから動き出します。
+        - speaker: 語り手
+          text: 零点から生まれた一本の糸。
+        - speaker: 語り手
+          text: その糸は、過去を結び、現在を紡ぎ、まだ見ぬ未来へと伸びてゆく。
+        - speaker: 語り手
+          text: 細目の理――。
+        - speaker: 語り手
+          text: それは、対話の中に潜む、生命のような秩序である。
+  scenario_pipes:
+  - pipe_id: PIPE-01
+    stage: 第1章 / 第1節
+    chapter: 第一章：起 ―― 零点の出会い
+    section: 混沌の懐と対話の核
+    visual_prompt: Sacred geometry 4-gon_wireframe, theme '映画企画：細目の理（ことわり）――対話から紡がれる一本の糸',
+      scene '第一章：起 ―― 零点の出会い - 混沌の懐と対話の核', illuminated by Okinawa-Azure-Gold quantum
+      light, 8k
+    dialogue_cues:
+    - speaker: 琉坊さとし
+      text: Chaosの懐に投げ込まれた対話の断片を、まずは一つの塊として丸めてみよう。
+      audio_directive: &id001
+        voice: ja-JP-KeitaNeural
+        rate: +5%
+        tone: philosophical_calm
+    - speaker: 琉坊さとし
+      text: 粗目のままでは見えなかった文脈も、一度立体として受け取ることで輪郭が立ち上がる。
+      audio_directive: *id001
+    - speaker: Gemini嬢
+      text: はい。
+      audio_directive: &id002
+        voice: ja-JP-NanamiNeural
+        rate: +12%
+        tone: clear_insightful
+    - speaker: Gemini嬢
+      text: 波打ち際の揺らぎも、お題という核を中心に丸めることで受け止めやすくなります。
+      audio_directive: *id002
+    - speaker: Gemini嬢
+      text: 次の聖域へ渡す前に、まずは全体の温度感を整えていきましょう。
+      audio_directive: *id002
+  - pipe_id: PIPE-02
+    stage: 第2章 / 第1節
+    chapter: 第二章：承 ―― 破骨細胞の予感
+    section: 結晶内部のノイズと再構築
+    visual_prompt: Sacred geometry 4-gon_wireframe, theme '映画企画：細目の理（ことわり）――対話から紡がれる一本の糸',
+      scene '第二章：承 ―― 破骨細胞の予感 - 結晶内部のノイズと再構築', illuminated by Okinawa-Azure-Gold quantum
+      light, 8k
+    dialogue_cues:
+    - speaker: 語り手
+      text: 生地の奥には、まだ整っていないノイズや余白が潜んでいる。
+      audio_directive: &id003
+        voice: ja-JP-AoiNeural
+        rate: +8%
+        tone: poetic_narration
+    - speaker: 語り手
+      text: 壊すために壊すのではない。
+      audio_directive: *id003
+    - speaker: 語り手
+      text: 古い形をほどくことで、まだ見ぬ秩序の居場所をつくる。
+      audio_directive: *id003
+    - speaker: Gemini嬢
+      text: 余白は欠落ではありません。
+      audio_directive: *id002
+    - speaker: Gemini嬢
+      text: 次の構造が生まれるために、まだ形を持たない可能性なのです。
+      audio_directive: *id002
+  - pipe_id: PIPE-03
+    stage: 第3章 / 第1節
+    chapter: 第三章：転 ―― カスケードとパイプの錬成
+    section: 四角形の展開と三本のパイプ
+    visual_prompt: Sacred geometry 4-gon_wireframe, theme '映画企画：細目の理（ことわり）――対話から紡がれる一本の糸',
+      scene '第三章：転 ―― カスケードとパイプの錬成 - 四角形の展開と三本のパイプ', illuminated by Okinawa-Azure-Gold
+      quantum light, 8k
+    dialogue_cues:
+    - speaker: 琉坊さとし
+      text: 立体として受け止めたものを、今度は広げる。
+      audio_directive: *id001
+    - speaker: 琉坊さとし
+      text: 見えなかった階層が、ここで姿を現す。
+      audio_directive: *id001
+    - speaker: 琉坊さとし
+      text: Entropyでお題・章・節・文へとカスケード化し、思考の階層を一つずつ見える形にしていく。
+      audio_directive: *id001
+    - speaker: Gemini嬢
+      text: 三本のパイプは、それぞれ異なる役割を担いながら、一つの物語を紡いでいくのですね。
+      audio_directive: *id002
+  - pipe_id: PIPE-04
+    stage: 第4章 / 第1節
+    chapter: 第四章：結 ―― 一本の糸、次世代への継承
+    section: 結晶化から宇宙の種へ
+    visual_prompt: Sacred geometry 4-gon_wireframe, theme '映画企画：細目の理（ことわり）――対話から紡がれる一本の糸',
+      scene '第四章：結 ―― 一本の糸、次世代への継承 - 結晶化から宇宙の種へ', illuminated by Okinawa-Azure-Gold
+      quantum light, 8k
+    dialogue_cues:
+    - speaker: Gemini嬢
+      text: そして最後はStrataCrystallizationで、燃えないYAMLの結晶として地層に刻まれます。
+      audio_directive: *id002
+    - speaker: 語り手
+      text: 無数の対話は、やがて一本の糸となる。
+      audio_directive: *id003
+    - speaker: 語り手
+      text: 記録は終わりではなく、未来へ続く物語の始まりなのだ。
+      audio_directive: *id003
+    - speaker: 語り手
+      text: Gemini嬢：次の世代の種へとつながる循環が、ここから動き出します。
+      audio_directive: *id003
+    - speaker: 語り手
+      text: 零点から生まれた一本の糸。
+      audio_directive: *id003
+    - speaker: 語り手
+      text: その糸は、過去を結び、現在を紡ぎ、まだ見ぬ未来へと伸びてゆく。
+      audio_directive: *id003
+    - speaker: 語り手
+      text: 細目の理――。
+      audio_directive: *id003
+    - speaker: 語り手
+      text: それは、対話の中に潜む、生命のような秩序である。
+      audio_directive: *id003
+  source_file: dialogue_03.md
