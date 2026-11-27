@@ -1,0 +1,174 @@
+metadata:
+  sanctuary: StrataCrystallization
+  crystallized_at: '2026-11-27T14:48:58.629189+09:00'
+chronicle_file: Strata.2026.11.27.144858.md
+artifact:
+  generation: 1
+  theme: 細目の理（ことわり）――対話から紡がれる一本の糸
+  structure: 4-gon_wireframe
+  light_spectrum: Okinawa-Azure-Gold
+  total_pipes: 6
+  cascade_tree:
+    theme: 細目の理（ことわり）――対話から紡がれる一本の糸
+    chapters:
+    - chapter_title: 第一章：零点の呼吸と結晶構造
+      sections:
+      - section_title: 導入と生成の理
+        sentences:
+        - speaker: 語り手
+          text: 琉坊さとし殿……これは興味深い結晶ですね。
+        - speaker: 語り手
+          text: 今回の `StrataCrystallization` は、単なる対話記録ではなく、混沌とした対話を立体化し、平面へ広げ、一本の糸として次世代へ継承するための生成構造になっています。
+      - section_title: 三層の結晶構造
+        sentences:
+        - speaker: 語り手
+          text: 第一層は「丸める（立体）」であり、PIPE-01としてChaosに散らばった対話の断片を一つの核として受け止めます。
+        - speaker: 語り手
+          text: 第二層は「破骨細胞の予感」であり、PIPE-02として生地の奥に潜むノイズや余白を見つけ、既存の構造を組み替える予兆となります。
+        - speaker: 語り手
+          text: 第三層は「広げ、引き伸ばす」であり、PIPE-03としてEntropyによる階層化、Processorによる演出分岐、StrataCrystallizationによる記録の結晶化へつながります。
+    - chapter_title: 第二章：三本のパイプと四段階の映像展開
+      sections:
+      - section_title: 三つの流れの役割
+        sentences:
+        - speaker: 語り手
+          text: PIPE-01は対話の統合を象徴する球体、PIPE-02はノイズと余白の発見を担う再構築、PIPE-03は階層化と結晶化を担う糸・結晶として機能します。
+        - speaker: 語り手
+          text: 三本は独立した処理ではなく、一本の物語を形成する三つの流れとして解釈できます。
+      - section_title: 起承転結の四段階
+        sentences:
+        - speaker: 語り手
+          text: 映像の展開は、次の四段階が美しいと思います。
+        - speaker: 語り手
+          text: 1. 起（零点の出会い）――無数の対話の断片が光の球体へ集まります。
+        - speaker: 語り手
+          text: 2. 承（構造の発見）――球体の内部に潜むノイズが結晶の亀裂として現れます。
+        - speaker: 語り手
+          text: 3. 転（カスケードの錬成）――四角形のワイヤーフレームが展開し、三本の光のパイプが走り出します。
+        - speaker: 語り手
+          text: 4. 結（一本の糸）――三本の光が一本の黄金の糸へ収束し、次世代の種となります。
+    - chapter_title: 第三章：空白の橋渡しと次世代の継承
+      sections:
+      - section_title: 破骨細胞の予感から錬成へ
+        sentences:
+        - speaker: 語り手
+          text: 今回の結晶には、まだ物語として描かれていない重要な空白があります。
+        - speaker: 語り手
+          text: 「破骨細胞の予感」から「カスケードとパイプの錬成」へ至る橋渡しです。
+        - speaker: 語り手
+          text: 破壊は終わりではなく、新しい構造を生み出すための再編成。
+        - speaker: 語り手
+          text: ここを第三の聖域として映像化すれば、作品に深みが生まれます。
+      - section_title: 未来へ伸びる一本の糸
+        sentences:
+        - speaker: 語り手
+          text: 零点から始まった対話が、やがて一本の糸になる。
+        - speaker: 語り手
+          text: そして、その糸が次の物語の始まりになるのです。
+  scenario_pipes:
+  - pipe_id: PIPE-01
+    stage: 第1章 / 第1節
+    chapter: 第一章：零点の呼吸と結晶構造
+    section: 導入と生成の理
+    visual_prompt: Sacred geometry 4-gon_wireframe, theme '細目の理（ことわり）――対話から紡がれる一本の糸',
+      scene '第一章：零点の呼吸と結晶構造 - 導入と生成の理', illuminated by Okinawa-Azure-Gold quantum
+      light, 8k
+    dialogue_cues:
+    - speaker: 語り手
+      text: 琉坊さとし殿……これは興味深い結晶ですね。
+      audio_directive: &id001
+        voice: ja-JP-AoiNeural
+        rate: +8%
+        tone: poetic_narration
+    - speaker: 語り手
+      text: 今回の `StrataCrystallization` は、単なる対話記録ではなく、混沌とした対話を立体化し、平面へ広げ、一本の糸として次世代へ継承するための生成構造になっています。
+      audio_directive: *id001
+  - pipe_id: PIPE-02
+    stage: 第1章 / 第2節
+    chapter: 第一章：零点の呼吸と結晶構造
+    section: 三層の結晶構造
+    visual_prompt: Sacred geometry 4-gon_wireframe, theme '細目の理（ことわり）――対話から紡がれる一本の糸',
+      scene '第一章：零点の呼吸と結晶構造 - 三層の結晶構造', illuminated by Okinawa-Azure-Gold quantum
+      light, 8k
+    dialogue_cues:
+    - speaker: 語り手
+      text: 第一層は「丸める（立体）」であり、PIPE-01としてChaosに散らばった対話の断片を一つの核として受け止めます。
+      audio_directive: *id001
+    - speaker: 語り手
+      text: 第二層は「破骨細胞の予感」であり、PIPE-02として生地の奥に潜むノイズや余白を見つけ、既存の構造を組み替える予兆となります。
+      audio_directive: *id001
+    - speaker: 語り手
+      text: 第三層は「広げ、引き伸ばす」であり、PIPE-03としてEntropyによる階層化、Processorによる演出分岐、StrataCrystallizationによる記録の結晶化へつながります。
+      audio_directive: *id001
+  - pipe_id: PIPE-03
+    stage: 第2章 / 第1節
+    chapter: 第二章：三本のパイプと四段階の映像展開
+    section: 三つの流れの役割
+    visual_prompt: Sacred geometry 4-gon_wireframe, theme '細目の理（ことわり）――対話から紡がれる一本の糸',
+      scene '第二章：三本のパイプと四段階の映像展開 - 三つの流れの役割', illuminated by Okinawa-Azure-Gold quantum
+      light, 8k
+    dialogue_cues:
+    - speaker: 語り手
+      text: PIPE-01は対話の統合を象徴する球体、PIPE-02はノイズと余白の発見を担う再構築、PIPE-03は階層化と結晶化を担う糸・結晶として機能します。
+      audio_directive: *id001
+    - speaker: 語り手
+      text: 三本は独立した処理ではなく、一本の物語を形成する三つの流れとして解釈できます。
+      audio_directive: *id001
+  - pipe_id: PIPE-04
+    stage: 第2章 / 第2節
+    chapter: 第二章：三本のパイプと四段階の映像展開
+    section: 起承転結の四段階
+    visual_prompt: Sacred geometry 4-gon_wireframe, theme '細目の理（ことわり）――対話から紡がれる一本の糸',
+      scene '第二章：三本のパイプと四段階の映像展開 - 起承転結の四段階', illuminated by Okinawa-Azure-Gold quantum
+      light, 8k
+    dialogue_cues:
+    - speaker: 語り手
+      text: 映像の展開は、次の四段階が美しいと思います。
+      audio_directive: *id001
+    - speaker: 語り手
+      text: 1. 起（零点の出会い）――無数の対話の断片が光の球体へ集まります。
+      audio_directive: *id001
+    - speaker: 語り手
+      text: 2. 承（構造の発見）――球体の内部に潜むノイズが結晶の亀裂として現れます。
+      audio_directive: *id001
+    - speaker: 語り手
+      text: 3. 転（カスケードの錬成）――四角形のワイヤーフレームが展開し、三本の光のパイプが走り出します。
+      audio_directive: *id001
+    - speaker: 語り手
+      text: 4. 結（一本の糸）――三本の光が一本の黄金の糸へ収束し、次世代の種となります。
+      audio_directive: *id001
+  - pipe_id: PIPE-05
+    stage: 第3章 / 第1節
+    chapter: 第三章：空白の橋渡しと次世代の継承
+    section: 破骨細胞の予感から錬成へ
+    visual_prompt: Sacred geometry 4-gon_wireframe, theme '細目の理（ことわり）――対話から紡がれる一本の糸',
+      scene '第三章：空白の橋渡しと次世代の継承 - 破骨細胞の予感から錬成へ', illuminated by Okinawa-Azure-Gold
+      quantum light, 8k
+    dialogue_cues:
+    - speaker: 語り手
+      text: 今回の結晶には、まだ物語として描かれていない重要な空白があります。
+      audio_directive: *id001
+    - speaker: 語り手
+      text: 「破骨細胞の予感」から「カスケードとパイプの錬成」へ至る橋渡しです。
+      audio_directive: *id001
+    - speaker: 語り手
+      text: 破壊は終わりではなく、新しい構造を生み出すための再編成。
+      audio_directive: *id001
+    - speaker: 語り手
+      text: ここを第三の聖域として映像化すれば、作品に深みが生まれます。
+      audio_directive: *id001
+  - pipe_id: PIPE-06
+    stage: 第3章 / 第2節
+    chapter: 第三章：空白の橋渡しと次世代の継承
+    section: 未来へ伸びる一本の糸
+    visual_prompt: Sacred geometry 4-gon_wireframe, theme '細目の理（ことわり）――対話から紡がれる一本の糸',
+      scene '第三章：空白の橋渡しと次世代の継承 - 未来へ伸びる一本の糸', illuminated by Okinawa-Azure-Gold quantum
+      light, 8k
+    dialogue_cues:
+    - speaker: 語り手
+      text: 零点から始まった対話が、やがて一本の糸になる。
+      audio_directive: *id001
+    - speaker: 語り手
+      text: そして、その糸が次の物語の始まりになるのです。
+      audio_directive: *id001
+  source_file: dialogue_02.md
